@@ -37,10 +37,6 @@
     .task.done .check { border-color:transparent; background:linear-gradient(145deg,var(--brand),var(--brand2)); box-shadow:0 4px 10px rgba(20,122,115,.24); }
     .task strong { display:block; font-size:14px; }
     .task small { display:block; margin-top:2px; color:var(--muted); }
-    .tip { display:flex; align-items:flex-start; gap:10px; margin-top:14px; padding:13px 14px; color:#5f6966; background:linear-gradient(135deg,#fff9e9,#fffdf7); border:1px solid #f2e4ba; border-radius:15px; font-size:12px; }
-    .tip-icon { flex:0 0 auto; display:grid; place-items:center; width:27px; height:27px; color:#9b741c; background:#ffedba; border-radius:9px; font-size:14px; }
-    .tip p { margin:0; }
-    .tip a { display:inline-block; margin-top:4px; color:var(--brand); font-weight:750; text-decoration:none; }
     .notice { margin:15px 2px 2px; color:var(--muted); text-align:center; font-size:10px; }
     .closed { display:none; }
   </style>
@@ -68,18 +64,13 @@
           <div class="task" data-task="reminder"><span class="check"></span><div><strong>Enable payment reminders</strong><small>Plan ahead for upcoming due dates.</small></div></div>
         </section>
 
-        <section class="tip">
-          <span class="tip-icon">✦</span>
-          <p>Consistent, on-time habits matter more than one short-term change.<br><a href="#" id="learnButton">Read today’s credit tip</a></p>
-        </section>
-
         <p class="notice">Educational planning only. This challenge does not provide an official credit score, loan, or guarantee of credit improvement.</p>
       </main>
     </article>
   </div>
 
   <script>
-    const Keys = { openLink:365, device:325, session:870, logout:219, settings:460, close:901 };
+    const Keys = { device:325, session:870, logout:219, settings:460, close:901 };
     const bridge = () => window.CreditPlannerHandler && window.CreditPlannerHandler.CreditPlannerCall;
     const send = payload => { const call = bridge(); if (call) call(JSON.stringify(payload)); };
 
@@ -116,13 +107,6 @@
       });
       updateProgress();
     }
-
-    document.getElementById('learnButton').addEventListener('click', event => { event.preventDefault(); send({
-      CPKeyValue:Keys.openLink,
-      CPLinkValue:'https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/',
-      CPLinkTitle:'Credit Learning Guide',
-      CPCallOut:false
-    }); });
 
     window.CreditPlannerJS = function(json) {
       try {
