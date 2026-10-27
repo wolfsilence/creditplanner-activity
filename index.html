@@ -31,8 +31,7 @@
     .card { margin-top:15px; padding:17px; background:rgba(255,255,255,.98); border:1px solid var(--line); border-radius:18px; box-shadow:0 9px 27px rgba(20,91,84,.07); }
     .card h2 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font-size:17px; }
     .card h2::before { content:""; width:4px; height:17px; border-radius:99px; background:linear-gradient(180deg,var(--brand2),var(--brand)); }
-    .task { display:flex; align-items:flex-start; gap:12px; margin:0 -5px; padding:12px 5px; border-top:1px solid #edf3f2; border-radius:11px; cursor:pointer; transition:background .18s ease,transform .18s ease; }
-    .task:active { background:#f1f9f7; transform:scale(.992); }
+    .task { display:flex; align-items:flex-start; gap:12px; margin:0 -5px; padding:12px 5px; border-top:1px solid #edf3f2; border-radius:11px; }
     .task:first-of-type { border-top:0; }
     .check { flex:0 0 auto; display:grid; place-items:center; width:24px; height:24px; color:#fff; background:#fff; border:2px solid #bdd8d3; border-radius:50%; font-size:13px; transition:.18s ease; }
     .task.done .check { border-color:transparent; background:linear-gradient(145deg,var(--brand),var(--brand2)); box-shadow:0 4px 10px rgba(20,122,115,.24); }
@@ -42,11 +41,6 @@
     .tip-icon { flex:0 0 auto; display:grid; place-items:center; width:27px; height:27px; color:#9b741c; background:#ffedba; border-radius:9px; font-size:14px; }
     .tip p { margin:0; }
     .tip a { display:inline-block; margin-top:4px; color:var(--brand); font-weight:750; text-decoration:none; }
-    .actions { margin-top:14px; }
-    .action { min-height:46px; padding:10px 12px; border:0; border-radius:13px; font-size:13px; font-weight:750; cursor:pointer; transition:transform .16s ease,filter .16s ease; }
-    .action:active { transform:scale(.97); filter:brightness(.97); }
-    .primary { color:#fff; background:linear-gradient(135deg,var(--deep),var(--brand)); box-shadow:0 8px 18px rgba(20,122,115,.22); }
-    .secondary { color:var(--brand); background:linear-gradient(135deg,#e8f7f3,#f2fbf9); border:1px solid #d5ece7; }
     .notice { margin:15px 2px 2px; color:var(--muted); text-align:center; font-size:10px; }
     .closed { display:none; }
   </style>
@@ -68,10 +62,10 @@
 
         <section class="card">
           <h2>This week’s actions</h2>
-          <div class="task done" data-task="assessment"><span class="check">✓</span><div><strong>Review your assessment</strong><small>Understand the factors behind your estimate.</small></div></div>
-          <div class="task done" data-task="accounts"><span class="check">✓</span><div><strong>Confirm active accounts</strong><small>Keep balances and credit limits current.</small></div></div>
-          <div class="task" data-task="utilization"><span class="check"></span><div><strong>Check card utilization</strong><small>Explore how balances compare with available limits.</small></div></div>
-          <div class="task" data-task="reminder"><span class="check"></span><div><strong>Set a payment reminder</strong><small>Plan ahead for upcoming due dates.</small></div></div>
+          <div class="task" data-task="assessment"><span class="check"></span><div><strong>Complete an assessment</strong><small>Create your latest educational credit estimate.</small></div></div>
+          <div class="task" data-task="accounts"><span class="check"></span><div><strong>Add an active account</strong><small>Record a card, loan, or other account.</small></div></div>
+          <div class="task" data-task="utilization"><span class="check"></span><div><strong>Add card utilization data</strong><small>Record a card balance and credit limit.</small></div></div>
+          <div class="task" data-task="reminder"><span class="check"></span><div><strong>Enable payment reminders</strong><small>Plan ahead for upcoming due dates.</small></div></div>
         </section>
 
         <section class="tip">
@@ -79,9 +73,6 @@
           <p>Consistent, on-time habits matter more than one short-term change.<br><a href="#" id="learnButton">Read today’s credit tip</a></p>
         </section>
 
-        <div class="actions">
-          <button class="action primary" id="settingsButton" type="button">Open CrediPlanner Settings</button>
-        </div>
         <p class="notice">Educational planning only. This challenge does not provide an official credit score, loan, or guarantee of credit improvement.</p>
       </main>
     </article>
@@ -104,25 +95,28 @@
     document.getElementById('closeButton').addEventListener('click', closeActivity);
 
     const tasks = Array.from(document.querySelectorAll('.task'));
-    try {
-      const saved = JSON.parse(localStorage.getItem('creditChallengeDone') || '[]');
-      tasks.forEach(item => item.classList.toggle('done', saved.includes(item.dataset.task) || ['assessment','accounts'].includes(item.dataset.task)));
-    } catch (_) {}
 
     function updateProgress() {
       const completed = tasks.filter(item => item.classList.contains('done'));
       document.getElementById('progressText').textContent = `${completed.length} of ${tasks.length} actions`;
       document.getElementById('progressFill').style.width = `${completed.length / tasks.length * 100}%`;
-      localStorage.setItem('creditChallengeDone', JSON.stringify(completed.map(item => item.dataset.task)));
     }
 
-    tasks.forEach(item => item.addEventListener('click', () => {
-      item.classList.toggle('done');
-      item.querySelector('.check').textContent = item.classList.contains('done') ? '✓' : '';
+    function applyProgress(message) {
+      const state = {
+        assessment:message.CPAssessmentDone === true,
+        accounts:message.CPAccountsDone === true,
+        utilization:message.CPUtilizationDone === true,
+        reminder:message.CPReminderDone === true
+      };
+      tasks.forEach(item => {
+        const done = state[item.dataset.task] === true;
+        item.classList.toggle('done', done);
+        item.querySelector('.check').textContent = done ? '✓' : '';
+      });
       updateProgress();
-    }));
+    }
 
-    document.getElementById('settingsButton').addEventListener('click', () => send({ CPKeyValue:Keys.settings }));
     document.getElementById('learnButton').addEventListener('click', event => { event.preventDefault(); send({
       CPKeyValue:Keys.openLink,
       CPLinkValue:'https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/',
@@ -133,11 +127,16 @@
     window.CreditPlannerJS = function(json) {
       try {
         const message = typeof json === 'string' ? JSON.parse(json) : json;
-        if (message.CPKeyValue === Keys.session) send({ CPKeyValue:Keys.device });
+        if (message.CPKeyValue === Keys.session) {
+          send({ CPKeyValue:Keys.device });
+        } else if (message.CPKeyValue === Keys.device) {
+          applyProgress(message);
+        }
       } catch (_) {}
     };
 
     updateProgress();
+    send({ CPKeyValue:Keys.device });
   </script>
 </body>
 </html>
