@@ -10,7 +10,7 @@
     * { box-sizing:border-box; }
     html,body { width:100%; height:100%; margin:0; background:transparent; font:15px/1.48 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
     button { font:inherit; -webkit-tap-highlight-color:transparent; }
-    .overlay { display:flex; align-items:center; justify-content:center; width:100%; min-height:100%; padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom)); background:rgba(6,28,32,.34); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+    .overlay { display:flex; align-items:center; justify-content:center; width:100%; min-height:100%; padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom)); background:transparent; }
     .dialog { position:relative; width:min(100%,420px); max-height:min(78vh,710px); overflow:auto; color:var(--ink); background:linear-gradient(180deg,#f7fcfb 0,#fff 44%); border:1px solid rgba(255,255,255,.65); border-radius:28px; box-shadow:0 30px 90px rgba(5,38,40,.32),0 2px 8px rgba(5,38,40,.12); -webkit-overflow-scrolling:touch; }
     .close { position:absolute; z-index:4; top:14px; right:14px; display:grid; place-items:center; width:36px; height:36px; padding:0; color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.34); border-radius:50%; font-size:21px; line-height:1; box-shadow:0 6px 18px rgba(5,38,40,.15); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
     .hero { position:relative; isolation:isolate; min-height:218px; overflow:hidden; padding:31px 56px 25px 23px; color:#fff; background:linear-gradient(135deg,#0b5860 0%,#147a73 48%,#4db79c 100%); }
